@@ -1,12 +1,5 @@
 ---
 
-# 조유빈(Yubin Cho) | Data Engineer Portfolio 🤗
-안녕하세요. 데이터 엔지니어를 목표로 공부 중인 조유빈입니다.  
-데이터를 단순히 분석하는 것을 넘어, **데이터 적재/정제/집계/모델링** 과정을 직접 구현하여  
-재사용 가능한 데이터 구조를 만드는 프로젝트를 만들고 있습니다.
-
----
-
 <img width="150" height="160" alt="서울도시" src="https://github.com/user-attachments/assets/ff773fee-2db8-46a2-aafd-56a3d5864bcc" />
 
 
