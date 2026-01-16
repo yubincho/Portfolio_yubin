@@ -6,6 +6,7 @@
 재사용 가능한 데이터 구조를 만드는 프로젝트를 만들고 있습니다.
 
 ---
+<br>
 
 ## Portfolio 1 — 서울시 상권 분석 (유동인구 × 매출 × 공실률)
 
@@ -16,9 +17,9 @@
 - 핵심 테이블: `stg_seoul_sales_quarter`, `mart_sales_dong_quarter`, `mart_commercial_dong_quarter`
 - 목표: 상권 효율/변화 감지 및 비교 분석 기반 마련
 
-➡️ 자세한 내용은 [`portfolio1/`](./portfolio1) 폴더에서 확인할 수 있습니다.
+➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio%201) 폴더에서 확인할 수 있습니다.
 
-
+<br><br>
 
 ## Portfolio 2 — ML/DL Project (준비 중)
 
