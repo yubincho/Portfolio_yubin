@@ -1,7 +1,9 @@
+
+
+<img width="180" height="190" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
+
+
 ---
-
-<img width="150" height="160" alt="서울도시" src="https://github.com/user-attachments/assets/ff773fee-2db8-46a2-aafd-56a3d5864bcc" />
-
 
 # 서울시 상권 분석 (유동인구 × 매출 × 공실률)
 
