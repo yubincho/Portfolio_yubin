@@ -20,6 +20,7 @@
 
 
 ---
+<br>
 
 ## 1. 프로젝트 목표
 
@@ -27,7 +28,7 @@
 - 분기별 상권 변화를 추적 가능한 **데이터마트(Aggregation Mart)** 구축
 - 향후 대시보드를 통해 주요 지표 및 인사이트를 시각화하여 전달
 
----
+<br><br>
 
 ## 2. 사용 기술
 
@@ -37,7 +38,7 @@
 - **(예정) AWS EC2, RDS, Docker, Airflow**
 - **(예정) 대시보드 구현 및 배포**
 
----
+<br><br>
 
 ## 3. 데이터 파이프라인 구조
 
@@ -49,26 +50,15 @@ Raw 데이터 → Staging 적재 → 행정동 매핑(Dimension) → 분기 집�
 - **매출 데이터**: 분기 단위(행정동/업종 포함)로 Staging 적재
 - **공실률 데이터**: 분석에 적합하도록 Long Format 형태로 적재
 
----
+<br><br>
 
-## 4. 데이터 모델 (현재 구축 완료 테이블 5개)
+## 4. 데이터 모델 (현재 구축 완료 테이블 7개)
+* 프로젝트 테이블 구성 (Raw → Staging → Analytics)
+* 📄 ERD / 데이터 모델 PDF 바로가기: [데이터모델.pdf](./portfolio1/docs/데이터모델.pdf)
 
-| 구분 | 테이블 | 설명 |
-|---|---|---|
-| Staging | `stg_metro_people_snapshot` | 서울시 유동인구 스냅샷 원천 데이터를 적재하는 Raw/Staging 테이블 |
-| Dimension | `dim_admin_dong` | 행정동 코드 기준 표준 행정동 마스터 테이블 (시도/시군구/행정동 매핑) |
-| Mart | `agg_livingpop_dong_quarter` | 유동인구 데이터를 행정동 × 분기 단위로 집계한 분석용 테이블 |
-| Staging | `stg_seoul_sales_quarter` | 상권 매출 데이터를 분기 단위로 적재한 Staging 테이블 |
-| Staging | `stg_seoul_vacancy_long` | 공실률 데이터를 Long Format 형태로 적재한 Staging 테이블 |
+<br><br>
 
-## ERD
 
-<img width="935" height="3540" alt="ERD2" src="https://github.com/user-attachments/assets/bd53f3f2-e7d7-4f5e-a450-23c8a34dcd81" />
-
-> ※ 공실률 데이터(`stg_seoul_vacancy_long`)는 지역 단위 컬럼(지역별1/2) 기반이므로,  
-> 행정동 코드 매핑 테이블을 추가하여 결합하는 방향으로 확장 예정입니다.
-
----
 
 ## 5. 분석 아이디어 (예정)
 
@@ -90,7 +80,7 @@ Raw 데이터 → Staging 적재 → 행정동 매핑(Dimension) → 분기 집�
 - 공실률 상승 + 매출 하락 지역을 탐지하여 리스크 상권 후보를 도출
 - 분기별 변화율을 기반으로 이상징후(급락/급등) 지역을 탐지
 
----
+<br><br>
 
 ## 6. 대시보드 구성 (예정)
 
@@ -100,7 +90,7 @@ Raw 데이터 → Staging 적재 → 행정동 매핑(Dimension) → 분기 집�
 - 공실률 vs 효율 관계 시각화(Scatter)
 - 분기별 트렌드(Line)
 
----
+<br><br>
 
 ## 7. 프로젝트 진행 상황
 
@@ -111,7 +101,7 @@ Raw 데이터 → Staging 적재 → 행정동 매핑(Dimension) → 분기 집�
 - [ ] 효율 지표 산출 및 인사이트 도출
 - [ ] Streamlit 대시보드 구현 및 배포
 
----
+<br><br>
 
 ## 8. Repository 구조
 
