@@ -54,7 +54,7 @@ Raw 데이터 → Staging 적재 → 행정동 매핑(Dimension) → 분기 집�
 
 ## 4. 데이터 모델 (현재 구축 완료 테이블 7개)
 * 프로젝트 테이블 구성 (Raw → Staging → Analytics)
-* 📄 ERD / 데이터 모델 PDF 바로가기: [데이터모델.pdf](./portfolio1/docs/데이터모델.pdf)
+* 📄 ERD / 데이터 모델 PDF 바로가기: [데이터모델.pdf](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio%201/docs)
 
 <br><br>
 
