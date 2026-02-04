@@ -13,7 +13,8 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
   volumes:
-    - ./dags:/opt/airflow/dags
+    # - ./dags:/opt/airflow/dags
+    - airflow-dags:/opt/airflow/dags    # 추가
     - airflow-logs:/opt/airflow/logs
     - airflow-plugins:/opt/airflow/plugins
     - airflow-data:/opt/airflow/data
@@ -103,6 +104,7 @@ services:
 
 volumes:
   postgres-db-volume:
+  airflow-dags:  # 추가
   airflow-logs:
   airflow-plugins:
   airflow-data:
