@@ -1,10 +1,14 @@
 from __future__ import annotations
+
 from datetime import datetime
+
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.utils.task_group import TaskGroup
 
-GCS_BUCKET = "seoul-commercial-data"
+from seoul.config.seoul_config import BUCKET
+
+
 DATASETS = {
     "seoul_sales": {
         "zip_object": "raw/seoul_sales/zip/서울시분기별매출.zip",
@@ -24,7 +28,7 @@ DATASETS = {
 }
 
 
-def make_extract_taskgroup(dag, group_id, zip_object, extracted_prefix, mode: str):
+def make_extract_taskgroup(dag, group_id: str, zip_object: str, extracted_prefix: str, mode: str):
     with TaskGroup(group_id=group_id, dag=dag) as tg:
         BashOperator(
             task_id="extract_and_upload",
@@ -55,7 +59,6 @@ find "${ROOT_DIR}" -type f | head -20
 
 echo "[5/7] Upload extracted files to GCS (mode={{ params.mode }})"
 if [ "{{ params.mode }}" = "flat" ]; then
-  # CSV 우선, 없으면 xlsx → xls 순으로 fallback
   if ls "${ROOT_DIR}/"*.csv 1>/dev/null 2>&1; then
     gsutil -m cp "${ROOT_DIR}/"*.csv "gs://{{ params.bucket }}/{{ params.extracted_prefix }}/"
   elif ls "${ROOT_DIR}/"*.xlsx 1>/dev/null 2>&1; then
@@ -85,7 +88,7 @@ gsutil ls "gs://{{ params.bucket }}/{{ params.extracted_prefix }}/" | head -20
 echo "[7/7] Done"
 """,
             params={
-                "bucket": GCS_BUCKET,
+                "bucket": BUCKET,
                 "zip_object": zip_object,
                 "extracted_prefix": extracted_prefix,
                 "group_id": group_id,
@@ -102,6 +105,7 @@ with DAG(
     catchup=False,
     tags=["gcs", "zip", "extract", "raw", "taskgroup"],
 ) as dag:
+
     extract_groups = []
     for domain, cfg in DATASETS.items():
         tg = make_extract_taskgroup(
@@ -112,4 +116,8 @@ with DAG(
             mode=cfg["mode"],
         )
         extract_groups.append(tg)
-    extract_groups
+
+    # 병렬 실행
+    # extract_groups
+    for i in range(len(extract_groups) - 1):
+        extract_groups[i] >> extract_groups[i + 1]
