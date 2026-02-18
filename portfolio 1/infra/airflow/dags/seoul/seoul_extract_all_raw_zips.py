@@ -119,5 +119,7 @@ with DAG(
 
     # 병렬 실행
     # extract_groups
+
+    # 순차 실행
     for i in range(len(extract_groups) - 1):
         extract_groups[i] >> extract_groups[i + 1]
