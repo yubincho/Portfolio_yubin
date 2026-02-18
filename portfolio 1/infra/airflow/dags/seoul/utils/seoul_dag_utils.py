@@ -1,3 +1,4 @@
+# update 2026 02 18 
 # seoul_dag_utils.py
 from __future__ import annotations
 
@@ -108,7 +109,7 @@ def convert_xlsx_to_utf8_csv(
     input_path: str,
     output_path: str,
     label: str,
-    quoting: int = csv.QUOTE_ALL,
+    quoting: int = csv.QUOTE_NONNUMERIC,  # ← 변경
 ) -> None:
     """
     XLSX를 UTF-8 CSV로 변환
@@ -135,6 +136,7 @@ def convert_xlsx_to_utf8_csv(
         encoding="utf-8",
         quoting=quoting,
         lineterminator="\n",
+        escapechar='\\',  # ← 추가: 이스케이프 문자 명시
     )
     print(f"[{label}] ✓ XLSX->CSV rows={len(df)} cols={len(df.columns)}")
 
