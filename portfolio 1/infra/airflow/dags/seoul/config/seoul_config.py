@@ -26,8 +26,8 @@ MIN_BYTES = 1024
 
 # ===== GCS Prefixes =====
 # living population
-LIVINGPOP_EXTRACTED_BASE = "raw/living_population/extracted/서울시유동인구_스냅샷/"
-LIVINGPOP_NORMALIZED_BASE = "raw/living_population/normalized/서울시유동인구_스냅샷/"
+LIVINGPOP_EXTRACTED_BASE = "raw/living_population/extracted/"
+LIVINGPOP_NORMALIZED_BASE = "raw/living_population/normalized/"
 
 # sales
 SALES_EXTRACTED_PREFIX = "raw/seoul_sales/extracted/"
