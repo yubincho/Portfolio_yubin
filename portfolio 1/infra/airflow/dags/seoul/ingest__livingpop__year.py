@@ -1,3 +1,5 @@
+# Updated: 2026-02-18 07:35  ← 타임스탬프 변경
+
 from __future__ import annotations
 
 from datetime import datetime
