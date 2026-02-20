@@ -26,10 +26,23 @@ from seoul.config.seoul_config import (
 from seoul.utils.seoul_dag_utils import (
     list_gcs_objects_with_size,
     validate_min_size,
-    convert_vacancy_xlsx_to_utf8_csv,  # vacancy 전용 변환 함수
+    convert_vacancy_xlsx_to_long_csv,  # long 변환 함수로 교체
     gcs_upload_file,
     bq_postcheck_rowcount,
 )
+
+
+# BQ schema 고정 (long 스키마)
+VACANCY_LONG_SCHEMA = [
+    {"name": "building_type", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "지역별1", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "지역별2", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "period", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "metric", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "metric_detail", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "value", "type": "FLOAT", "mode": "NULLABLE"},
+    {"name": "source_file", "type": "STRING", "mode": "REQUIRED"},
+]
 
 
 with DAG(
@@ -38,7 +51,7 @@ with DAG(
     schedule=None,
     catchup=False,
     default_args=DEFAULT_ARGS,
-    tags=["seoul", "vacancy", "xlsx", "normalize", "bigquery", "raw"],
+    tags=["seoul", "vacancy", "xlsx", "normalize", "bigquery", "raw", "long"],
     max_active_runs=1,
 ) as dag:
 
@@ -55,26 +68,33 @@ with DAG(
         return {"xlsx_objects": xlsx_sorted}
 
     @task
-    def normalize_xlsx_to_csv(meta: dict) -> dict:
+    def normalize_xlsx_to_long_csv(meta: dict) -> dict:
         gcs_hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
         xlsx_objects: List[str] = meta["xlsx_objects"]
 
         normalized_objects: List[str] = []
+        total_rows = 0
+
         with tempfile.TemporaryDirectory() as tmp:
             for i, obj in enumerate(xlsx_objects, start=1):
-                base = os.path.basename(obj)
+                base = os.path.basename(obj)          # 예: 매장용빌딩.xlsx
+                stem, _ = os.path.splitext(base)      # 예: 매장용빌딩
+
                 local_xlsx = os.path.join(tmp, base)
-                local_csv = os.path.join(tmp, base.replace(".xlsx", ".csv"))
+                local_csv = os.path.join(tmp, f"{stem}_long.csv")
 
                 print(f"[vacancy] ({i}/{len(xlsx_objects)}) download: {obj}")
                 gcs_hook.download(BUCKET, obj, local_xlsx)
 
-                # vacancy 전용 변환(추가 헤더 행 제거 + QUOTE_ALL)
-                convert_vacancy_xlsx_to_utf8_csv(
+                # 멀티헤더→flat→ffill→long 변환
+                rows = convert_vacancy_xlsx_to_long_csv(
                     input_path=local_xlsx,
                     output_path=local_csv,
                     label=f"vacancy:{base}",
+                    building_type=stem,      # 매장용빌딩 / 오피스빌딩
+                    source_file=base,
                 )
+                total_rows += rows
 
                 out_obj = f"{VACANCY_NORMALIZED_PREFIX}{os.path.basename(local_csv)}"
                 print(f"[vacancy] ({i}/{len(xlsx_objects)}) upload: gs://{BUCKET}/{out_obj}")
@@ -82,7 +102,9 @@ with DAG(
                 normalized_objects.append(out_obj)
 
         meta["normalized_objects"] = normalized_objects
-        meta["source_uri"] = f"gs://{BUCKET}/{VACANCY_NORMALIZED_PREFIX}*.csv"
+        meta["source_uri"] = f"gs://{BUCKET}/{VACANCY_NORMALIZED_PREFIX}*_long.csv"
+        meta["normalized_total_rows"] = total_rows
+        print(f"[vacancy] normalized_total_rows={total_rows}")
         return meta
 
     load_to_bq = BigQueryInsertJobOperator(
@@ -96,18 +118,24 @@ with DAG(
                     "tableId": VACANCY_RAW_TABLE,
                 },
                 "sourceUris": [
-                    "{{ ti.xcom_pull(task_ids='normalize_xlsx_to_csv')['source_uri'] }}"
+                    "{{ ti.xcom_pull(task_ids='normalize_xlsx_to_long_csv')['source_uri'] }}"
                 ],
                 "sourceFormat": "CSV",
-                "skipLeadingRows": 1,  # (전용 함수가 추가 헤더 행 제거하므로 1 유지)
+                "skipLeadingRows": 1,
                 "encoding": "UTF-8",
                 "fieldDelimiter": ",",
                 "quote": "\"",
                 "allowQuotedNewlines": True,
-                "autodetect": True,
+
+                # long 스키마는 고정이므로 schema 고정 추천
+                "schema": {"fields": VACANCY_LONG_SCHEMA},
+                "autodetect": False,
+
                 "createDisposition": "CREATE_IF_NEEDED",
                 "writeDisposition": "WRITE_TRUNCATE",
-                "maxBadRecords": 50,
+
+                # long 변환 이후엔 bad record 거의 없어야 정상
+                "maxBadRecords": 0,
             }
         },
         gcp_conn_id=GCP_CONN_ID,
@@ -125,5 +153,5 @@ with DAG(
         )
 
     meta = list_xlsx_objects()
-    meta2 = normalize_xlsx_to_csv(meta)
+    meta2 = normalize_xlsx_to_long_csv(meta)
     meta2 >> load_to_bq >> postcheck()
