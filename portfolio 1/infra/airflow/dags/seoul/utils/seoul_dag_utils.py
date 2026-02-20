@@ -148,76 +148,32 @@ def convert_vacancy_xlsx_to_utf8_csv(
     label: str,
 ) -> None:
     """
-    [vacancy 전용]
-    XLSX를 UTF-8 CSV로 변환 + '추가 헤더 행' 제거
-
-    vacancy 엑셀(매장용빌딩/오피스빌딩)은
-    컬럼 헤더 아래에 "지역별(1), 지역별(2), ..." 같은
-    다단 헤더가 1~3줄 더 들어있는 경우가 있어,
-    그대로 CSV로 만들면 BigQuery에서 컬럼 수 불일치로 실패함.
-
-    처리:
-    - dtype=str로 타입 혼합 방지
-    - 빈 행 제거 / NaN -> '' 처리
-    - 헤더 아래 연속된 '추가 헤더 행' 제거
-    - QUOTE_ALL + escapechar로 BigQuery 로드 안정화
+    [vacancy 전용] XLSX를 UTF-8 CSV로 변환
+    - skiprows=2로 멀티레벨 헤더 제거
     """
     df = pd.read_excel(
         input_path,
         engine="openpyxl",
         sheet_name=0,
         dtype=str,
-        header=0,  # 첫 행을 컬럼으로 사용
+        skiprows=2,  # ← 상위 2행 스킵
     )
 
     if df.shape[0] == 0:
         raise ValueError(f"[{label}] XLSX has 0 rows: {input_path}")
 
-    # 빈 행 제거 + NaN 제거
-    df = df.dropna(how="all").fillna("")
-
-    # (중요) vacancy는 헤더 아래에 다단 헤더(지역별(1), 지역별(2) 등)가 추가로 들어있음
-    def _is_extra_header_row(row) -> bool:
-        # 첫 두 컬럼 기준으로 패턴 감지
-        first = str(row.iloc[0]).strip() if len(row) > 0 else ""
-        second = str(row.iloc[1]).strip() if len(row) > 1 else ""
-        # 예: "지역별(1)", "지역별(2)" / "지역별(1)", "지역별(2)" 등
-        if "지역별" in first and ("지역별" in second or second.endswith("(2)")):
-            return True
-        return False
-
-    # 앞부분에서 연속되는 추가 헤더 행 제거(방어적으로 최대 5줄)
-    drop_idx = []
-    for i in range(min(5, len(df))):
-        if _is_extra_header_row(df.iloc[i]):
-            drop_idx.append(df.index[i])
-        else:
-            break
-
-    if drop_idx:
-        print(f"[{label}] drop extra header rows: {len(drop_idx)}")
-        df = df.drop(index=drop_idx)
-
-    if df.shape[0] == 0:
-        raise ValueError(f"[{label}] after dropping extra header rows, 0 data rows")
-
-    # 컬럼명 정규화
     df.columns = [normalize_column_name(c) for c in df.columns]
-
-    # 줄바꿈 정규화(혹시 섞여있으면 BigQuery에서 파싱 꼬일 수 있음)
-    df = df.replace({"\r\n": "\n", "\r": "\n"}, regex=True)
+    df = df.dropna(how="all").fillna("")
 
     df.to_csv(
         output_path,
         index=False,
         encoding="utf-8",
-        quoting=csv.QUOTE_ALL,  # vacancy는 안전하게 ALL 권장
+        quoting=csv.QUOTE_ALL,
         lineterminator="\n",
         escapechar="\\",
-        doublequote=True,
     )
-
-    print(f"[{label}] ✓ vacancy XLSX->CSV rows={len(df)} cols={len(df.columns)} (QUOTE_ALL)")
+    print(f"[{label}] ✓ Vacancy XLSX→CSV rows={len(df)} cols={len(df.columns)}")
 
 
 def bq_postcheck_rowcount(
