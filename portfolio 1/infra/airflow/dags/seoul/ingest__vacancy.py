@@ -26,7 +26,7 @@ from seoul.config.seoul_config import (
 from seoul.utils.seoul_dag_utils import (
     list_gcs_objects_with_size,
     validate_min_size,
-    convert_xlsx_to_utf8_csv,
+    convert_vacancy_xlsx_to_utf8_csv,  # vacancy 전용 변환 함수
     gcs_upload_file,
     bq_postcheck_rowcount,
 )
@@ -45,7 +45,9 @@ with DAG(
     @task
     def list_xlsx_objects() -> dict:
         gcs_hook = GCSHook(gcp_conn_id=GCP_CONN_ID)
-        files = list_gcs_objects_with_size(gcs_hook, BUCKET, VACANCY_EXTRACTED_PREFIX, suffix=".xlsx")
+        files = list_gcs_objects_with_size(
+            gcs_hook, BUCKET, VACANCY_EXTRACTED_PREFIX, suffix=".xlsx"
+        )
         validate_min_size(files, MIN_BYTES, label="vacancy")
 
         xlsx_sorted = sorted([n for (n, _) in files])
@@ -67,7 +69,8 @@ with DAG(
                 print(f"[vacancy] ({i}/{len(xlsx_objects)}) download: {obj}")
                 gcs_hook.download(BUCKET, obj, local_xlsx)
 
-                convert_xlsx_to_utf8_csv(
+                # vacancy 전용 변환(추가 헤더 행 제거 + QUOTE_ALL)
+                convert_vacancy_xlsx_to_utf8_csv(
                     input_path=local_xlsx,
                     output_path=local_csv,
                     label=f"vacancy:{base}",
@@ -92,9 +95,11 @@ with DAG(
                     "datasetId": BQ_DATASET_RAW,
                     "tableId": VACANCY_RAW_TABLE,
                 },
-                "sourceUris": ["{{ ti.xcom_pull(task_ids='normalize_xlsx_to_csv')['source_uri'] }}"],
+                "sourceUris": [
+                    "{{ ti.xcom_pull(task_ids='normalize_xlsx_to_csv')['source_uri'] }}"
+                ],
                 "sourceFormat": "CSV",
-                "skipLeadingRows": 1,
+                "skipLeadingRows": 1,  # (전용 함수가 추가 헤더 행 제거하므로 1 유지)
                 "encoding": "UTF-8",
                 "fieldDelimiter": ",",
                 "quote": "\"",
