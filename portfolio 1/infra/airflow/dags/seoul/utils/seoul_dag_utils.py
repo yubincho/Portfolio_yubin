@@ -147,22 +147,21 @@ def convert_vacancy_xlsx_to_utf8_csv(
     output_path: str,
     label: str,
 ) -> None:
-    """
-    [vacancy 전용] XLSX를 UTF-8 CSV로 변환
-    - skiprows=2로 멀티레벨 헤더 제거
-    """
+    """[vacancy 전용] XLSX를 UTF-8 CSV로 변환"""
     df = pd.read_excel(
         input_path,
         engine="openpyxl",
         sheet_name=0,
         dtype=str,
-        skiprows=2,  # ← 상위 2행 스킵
+        skiprows=3,  # ← 3으로 변경
+        header=None,  # ← 추가: 헤더 없이 읽기
     )
 
     if df.shape[0] == 0:
         raise ValueError(f"[{label}] XLSX has 0 rows: {input_path}")
 
-    df.columns = [normalize_column_name(c) for c in df.columns]
+    # 컬럼명 직접 생성 (col_0, col_1, ...)
+    df.columns = [f"col_{i}" for i in range(len(df.columns))]
     df = df.dropna(how="all").fillna("")
 
     df.to_csv(
