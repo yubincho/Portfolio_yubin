@@ -1,4 +1,4 @@
-# update 2026 02 18 
+# update 2026 02 20
 # seoul_dag_utils.py
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import io
 from typing import List, Tuple, Optional
 
 import pandas as pd
+import numpy as np
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
 
