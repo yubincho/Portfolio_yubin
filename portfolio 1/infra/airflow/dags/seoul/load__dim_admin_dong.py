@@ -40,14 +40,18 @@ with DAG(
                 },
                 "sourceUris": [ADMIN_DONG_SOURCE_URI],
                 "sourceFormat": "CSV",
-                "fieldDelimiter": "\t",
+                "fieldDelimiter": ",",      # 변경
+                "skipLeadingRows": 1,       # 추가 권장
                 "encoding": "UTF-8",
+                "quote": "\"",
+                "allowQuotedNewlines": True,
                 "autodetect": True,
                 "writeDisposition": "WRITE_TRUNCATE",
             }
         },
         gcp_conn_id=GCP_CONN_ID,
     )
+
 
     build_dim = BigQueryInsertJobOperator(
         task_id="build_dim_admin_dong",

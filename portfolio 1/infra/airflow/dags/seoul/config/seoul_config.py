@@ -37,7 +37,9 @@ VACANCY_EXTRACTED_PREFIX = "raw/vacancy/extracted/"
 VACANCY_NORMALIZED_PREFIX = "raw/vacancy/normalized/"
 
 # admin dong (dim)
-ADMIN_DONG_SOURCE_URI = "gs://seoul-commercial-data/raw/admin_dong/admin_dong_code.txt"
+ADMIN_DONG_EXTRACTED_PREFIX = "raw/admin_dong/"          # 추가
+ADMIN_DONG_NORMALIZED_PREFIX = "raw/admin_dong/normalized/"  # 추가
+ADMIN_DONG_SOURCE_URI = "gs://seoul-commercial-data/raw/admin_dong/normalized/admin_dong_code.csv"  # 변경
 ADMIN_DONG_RAW_TABLE = "admin_dong_raw"
 ADMIN_DONG_DIM_TABLE = "dim_admin_dong"
 
