@@ -29,6 +29,12 @@ def normalize_column_name(col: str) -> str:
     return s
 
 
+def _clean_text(s: str) -> str:
+    s = str(s).strip()
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+
 def list_gcs_objects_with_size(
     gcs_hook: GCSHook,
     bucket: str,
@@ -141,38 +147,140 @@ def convert_xlsx_to_utf8_csv(
     print(f"[{label}] ✓ XLSX->CSV rows={len(df)} cols={len(df.columns)}")
 
 
-# vacancy 엑셀 -> csv 변환용 함수 
-def convert_vacancy_xlsx_to_utf8_csv(
+# =========================================================
+# Vacancy 전용: XLSX(멀티헤더/병합셀) -> LONG CSV
+# =========================================================
+def _flatten_vacancy_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    MultiIndex(3레벨) 컬럼을 flat으로 변환
+    - ('지역별(1)' or '구분별(1)') -> 지역별1
+    - ('지역별(2)' or '구분별(2)') -> 지역별2
+    - 나머지 -> "기간_지표_세부" 형태
+    """
+    if not isinstance(df.columns, pd.MultiIndex):
+        return df
+
+    cols_df = pd.DataFrame(df.columns.tolist()).ffill(axis=0).ffill(axis=1)
+
+    new_cols: List[str] = []
+    for a, b, c in cols_df.itertuples(index=False):
+        a = _clean_text(a)
+        b = _clean_text(b)
+        c = _clean_text(c)
+
+        if a in ("지역별(1)", "구분별(1)"):
+            new_cols.append("지역별1")
+        elif a in ("지역별(2)", "구분별(2)"):
+            new_cols.append("지역별2")
+        else:
+            parts = [p for p in (a, b, c) if p and p.lower() not in ("nan", "none")]
+            new_cols.append("_".join(parts))
+
+    out = df.copy()
+    out.columns = new_cols
+    return out
+
+
+def _to_vacancy_long(df_wide: pd.DataFrame) -> pd.DataFrame:
+    id_vars = ["지역별1", "지역별2"]
+    value_vars = [c for c in df_wide.columns if c not in id_vars]
+
+    long = df_wide.melt(
+        id_vars=id_vars,
+        value_vars=value_vars,
+        var_name="col",
+        value_name="value",
+    )
+
+    # col 예: "2023 1/4_임대료 (천원/㎡)_소계"
+    parts = long["col"].astype(str).str.split("_", n=2, expand=True)
+    if parts.shape[1] < 3:
+        raise ValueError("[vacancy] column split failed: expected 'period_metric_detail'")
+
+    long["period"] = parts[0].astype(str).str.strip()
+    long["metric"] = parts[1].astype(str).str.strip()
+    long["metric_detail"] = parts[2].astype(str).str.strip()
+    long = long.drop(columns=["col"])
+
+    # value 숫자화
+    long["value"] = (long["value"].astype(str)
+                     .str.replace(",", "", regex=False)
+                     .str.strip()
+                     .replace({"nan": np.nan, "": np.nan}))
+    long["value"] = pd.to_numeric(long["value"], errors="coerce")
+
+    # 키 정리
+    long["지역별1"] = long["지역별1"].astype(str).str.strip()
+    long["지역별2"] = long["지역별2"].astype(str).str.strip()
+
+    # 핵심 키 결측 제거
+    long = long.dropna(subset=["지역별1", "지역별2", "period", "metric", "metric_detail"])
+
+    return long
+
+
+def convert_vacancy_xlsx_to_long_csv(
     input_path: str,
     output_path: str,
     label: str,
-) -> None:
-    """[vacancy 전용] XLSX를 UTF-8 CSV로 변환"""
+    building_type: str,
+    source_file: str,
+) -> int:
+    """
+    [vacancy 전용]
+    XLSX(멀티헤더) -> flat -> ffill -> long -> CSV(QUOTE_ALL) 저장
+    반환: long row count
+    """
+    # 멀티헤더 3줄을 통째로 읽는다 (핵심!)
     df = pd.read_excel(
         input_path,
         engine="openpyxl",
         sheet_name=0,
+        header=[0, 1, 2],
         dtype=str,
-        skiprows=3,  # ← 3으로 변경
-        header=None,  # ← 추가: 헤더 없이 읽기
     )
 
     if df.shape[0] == 0:
         raise ValueError(f"[{label}] XLSX has 0 rows: {input_path}")
 
-    # 컬럼명 직접 생성 (col_0, col_1, ...)
-    df.columns = [f"col_{i}" for i in range(len(df.columns))]
-    df = df.dropna(how="all").fillna("")
+    df = _flatten_vacancy_columns(df)
 
-    df.to_csv(
+    if "지역별1" not in df.columns or "지역별2" not in df.columns:
+        print(f"[{label}] columns sample:", list(df.columns)[:12])
+        raise ValueError(f"[{label}] 지역별1/지역별2 컬럼 생성 실패. 헤더 구조 확인 필요.")
+
+    # 상위 지역 ffill (병합셀 대응)
+    df["지역별1"] = (df["지역별1"].astype(str).str.strip()
+                    .replace({"nan": np.nan, "": np.nan})
+                    .ffill())
+    df["지역별2"] = (df["지역별2"].astype(str).str.strip()
+                    .replace({"nan": np.nan, "": np.nan}))
+
+    # 빈 행 제거
+    df = df.dropna(how="all")
+
+    long = _to_vacancy_long(df)
+
+    # 메타 컬럼 추가 (BQ에 같이 적재)
+    long["building_type"] = building_type
+    long["source_file"] = source_file
+
+    # 컬럼 순서 고정
+    long = long[["building_type", "지역별1", "지역별2", "period", "metric", "metric_detail", "value", "source_file"]]
+
+    # BigQuery-safe CSV
+    long.to_csv(
         output_path,
         index=False,
         encoding="utf-8",
         quoting=csv.QUOTE_ALL,
-        lineterminator="\n",
         escapechar="\\",
+        doublequote=True,
+        lineterminator="\n",
     )
-    print(f"[{label}] ✓ Vacancy XLSX→CSV rows={len(df)} cols={len(df.columns)}")
+
+    print(f"[{label}] ✓ Vacancy XLSX→LONG CSV rows={len(long)} cols={len(long.columns)}")
+    return int(len(long))
 
 
 def bq_postcheck_rowcount(
