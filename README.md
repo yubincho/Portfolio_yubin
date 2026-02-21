@@ -18,7 +18,7 @@
 - 핵심 테이블: `stg_seoul_sales_quarter`, `mart_sales_dong_quarter`, `mart_commercial_dong_quarter`
 - 목표: 상권 효율/변화 감지 및 비교 분석 기반 마련
 
-➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio1%201) 폴더에서 확인할 수 있습니다.
+➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio1) 폴더에서 확인할 수 있습니다.
 
 <br><br>
 
