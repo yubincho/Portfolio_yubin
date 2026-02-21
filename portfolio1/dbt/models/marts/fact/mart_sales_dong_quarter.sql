@@ -1,16 +1,13 @@
 {{ config(materialized='table', schema='mart') }}
 
 select
-    admin_dong_code,
-    year,
-    quarter,
-
-    sum(sales_amount_month) as total_sales_amount,
-    sum(sales_cnt_month)    as total_sales_count
-
-from {{ ref('stg_seoul_sales') }}
-
+  admin_dong_code,
+  year,
+  quarter,
+  sum(sales_amount) as sales_amount,
+  sum(sales_count)  as sales_count
+from {{ ref('mart_sales_dong_quarter_industry') }}
 group by
-    admin_dong_code,
-    year,
-    quarter
+  admin_dong_code,
+  year,
+  quarter
