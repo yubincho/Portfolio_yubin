@@ -1,0 +1,12 @@
+portfolio1_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: smart-paratext-486618-v8
+      dataset: dbt
+      location: asia-northeast3
+      threads: 4
+      timeout_seconds: 300
+      keyfile: /workspaces/Portfolio_yubin/portfolio1/dbt/keys/smart-paratext-486618-v8-61e0edf60fdd.json

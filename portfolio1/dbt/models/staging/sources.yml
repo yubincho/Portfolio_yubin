@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw
+    database: smart-paratext-486618-v8
+    schema: raw
+
+    tables:
+      - name: admin_dong_raw
+      - name: living_population_raw_2023
+      - name: living_population_raw_2024
+      - name: living_population_raw_2025
+      - name: seoul_sales_raw
+      - name: vacancy_raw

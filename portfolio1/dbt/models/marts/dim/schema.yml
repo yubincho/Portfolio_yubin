@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: dim_admin_dong
+    columns:
+      - name: admin_dong_cd
+        tests:
+          - not_null
+          - unique
