@@ -3,7 +3,7 @@ version: 2
 models:
   - name: dim_admin_dong
     columns:
-      - name: admin_dong_cd
+      - name: admin_dong_code
         tests:
           - not_null
           - unique

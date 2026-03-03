@@ -4,7 +4,7 @@ with src as (
   select
     -- keys
     cast(`기준_년분기_코드` as int64) as year_quarter_code,         -- e.g. 20231
-    lpad(cast(`행정동_코드` as string), 10, '0') as admin_dong_code, -- join 안정성 (코드 길이 통일)
+    cast(`행정동_코드` as string) as admin_dong_code,  -- 8자리
     `행정동_코드_명` as admin_dong_name,
     `서비스_업종_코드` as service_industry_code,
     `서비스_업종_코드_명` as service_industry_name,

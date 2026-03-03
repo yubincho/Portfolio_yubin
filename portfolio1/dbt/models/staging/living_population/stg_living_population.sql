@@ -38,7 +38,7 @@ cleaned as (
         extract(year from parse_date('%Y%m%d', cast(`기준일ID` as string))) as year,
         extract(quarter from parse_date('%Y%m%d', cast(`기준일ID` as string))) as quarter,
 
-        lpad(cast(`행정동코드` as string), 10, '0') as admin_dong_code,
+        cast(`행정동코드` as string) as admin_dong_code,   -- 여기 컬럼이 8자리 코드여야 함
 
         cast(`시간대구분` as int64) as time_slot,
         cast(`총생활인구수` as int64) as total_population
