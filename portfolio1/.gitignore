@@ -5,3 +5,5 @@ dbt_packages/
 logs/
 *.zip
 *.json
+dashboard/streamlit_app/.streamlit/secrets.toml
+.streamlit/secrets.toml
