@@ -9,4 +9,4 @@ portfolio1_dbt:
       location: asia-northeast3
       threads: 4
       timeout_seconds: 300
-      keyfile: /workspaces/Portfolio_yubin/portfolio1/dbt/keys/smart-paratext-486618-v8-61e0edf60fdd.json
+      keyfile: /workspaces/Portfolio_yubin/portfolio1/dbt/keys/smart-paratext-486618-v8-5d859120a6bf.json
