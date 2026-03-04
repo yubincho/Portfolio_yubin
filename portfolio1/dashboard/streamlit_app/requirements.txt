@@ -1,6 +1,8 @@
-streamlit
-pandas
-google-cloud-bigquery
-db-dtypes
-plotly
-pydeck
+streamlit>=1.32
+google-cloud-bigquery>=3.17
+google-auth>=2.28
+db-dtypes>=1.2
+pandas>=2.0
+pyarrow>=14.0
+folium
+streamlit-folium
