@@ -806,9 +806,11 @@ def render_detail_panel(gu_name: str, pk: str):
             with ca:
                 latest_yq = df_gen["yq"].max()
                 df_pie = df_gen[df_gen["yq"]==latest_yq]
+                # ★ 데이터 순서에 맞게 색상 동적 매핑 (M→파랑, F→빨강)
+                pie3_colors = [MALE_CLR if g=="M" else FEM_CLR for g in df_pie["gender"]]
                 fig3 = go.Figure(go.Pie(
                     labels=df_pie["gender"], values=df_pie["sales_100m"],
-                    marker_colors=[MALE_CLR, FEM_CLR], hole=0.5,
+                    marker_colors=pie3_colors, hole=0.5,
                     textinfo="label+percent",
                     textfont=dict(color=TEXT_CLR),
                 ))
@@ -1415,9 +1417,11 @@ def render_gender():
         with c2:
             latest_yq = df["yq"].max()
             df_d = df[df["yq"]==latest_yq]
+            # ★ 데이터 순서에 맞게 색상 동적 매핑 (M→파랑, F→빨강)
+            pie2_colors = [MALE_CLR if g=="M" else FEM_CLR for g in df_d["gender"]]
             fig2 = go.Figure(go.Pie(
                 labels=df_d["gender"], values=df_d["sales_100m"], hole=0.55,
-                marker_colors=[MALE_CLR, FEM_CLR],
+                marker_colors=pie2_colors,
                 textinfo="percent+label", textfont=dict(color=TEXT_CLR),
             ))
             warm_fig(fig2, 300, f"{sel_gu} 최근 분기 성별 비율")
