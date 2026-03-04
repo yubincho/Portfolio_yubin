@@ -3,6 +3,9 @@ google-cloud-bigquery>=3.17
 google-auth>=2.28
 db-dtypes>=1.2
 pandas>=2.0
+plotly>=5.18.0
 pyarrow>=14.0
 folium
 streamlit-folium
+kaleido>=0.2.1
+fpdf2>=2.7.0
