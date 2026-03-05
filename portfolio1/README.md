@@ -6,9 +6,11 @@
 ---
 
 # 서울시 상권 분석 (유동인구 × 매출)
-<p align="center"> <img src="docs/architecture.png" alt="pipeline architecture" width="900"/> </p>
+<p align="center"> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>  →  <img src="https://img.shields.io/badge/Google_Cloud_Storage-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white"/>  →  <img src="https://img.shields.io/badge/Apache_Airflow-017CEE?style=for-the-badge&logo=apacheairflow&logoColor=white"/>  →  <img src="https://img.shields.io/badge/BigQuery-669DF6?style=for-the-badge&logo=googlebigquery&logoColor=white"/>  →  <img src="https://img.shields.io/badge/dbt-FF694B?style=for-the-badge&logo=dbt&logoColor=white"/>  →  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white"/> </p>
 
-<p align="center"> <a href="https://seoul-commercial-insight.streamlit.app/" target="_blank"> <img src="https://img.shields.io/badge/🚀 Live Demo-Streamlit Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit App"/> </a> </p>
+<p align="center"> <a href="https://seoul-commercial-insight.streamlit.app/" target="_blank"> <img src="https://img.shields.io/badge/🚀_Live_Demo-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit App"/> </a>   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/> </p>
+
+<br>
 
 ## 1. 프로젝트 개요
 
