@@ -116,7 +116,7 @@ Streamlit Dashboard
 
 ## 5. 데이터 모델링
 - 프로젝트 테이블 구성 (Raw → Staging → Analytics): [레이어별_테이블구성.pdf](./portfolio%201/docs/레이어별_테이블구성.pdf)
-- 📄 ERD / 데이터 모델 PDF 바로가기: [ERD 이미지 보기](./portfolio%201/docs/erd_diagram.png)
+- 📄 ERD / 데이터 모델 PDF 바로가기: [ERD 다이어그램 보기](https://github.com/yubincho/Portfolio_yubin/blob/main/portfolio1/portfolio%201/docs/erd_diagram.png)
 
 <br>
 <br>
