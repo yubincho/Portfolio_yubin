@@ -6,6 +6,9 @@
 ---
 
 # 서울시 상권 분석 (유동인구 × 매출)
+<p align="center"> <img src="docs/architecture.png" alt="pipeline architecture" width="900"/> </p>
+
+<p align="center"> <a href="https://seoul-commercial-insight.streamlit.app/" target="_blank"> <img src="https://img.shields.io/badge/🚀 Live Demo-Streamlit Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit App"/> </a> </p>
 
 ## 1. 프로젝트 개요
 
@@ -13,9 +16,7 @@
 
 단순 분석에 그치지 않고,
 
-**데이터 파이프라인 구축 → 데이터 모델링 → 분석 → 대시보드 시각화**
-
-까지 전체 데이터 흐름을 직접 구현하는 것을 목표로 합니다.
+**데이터 파이프라인 구축 → 데이터 모델링 → 분석 → 대시보드 시각화** 까지 전체 데이터 흐름을 직접 구현하는 것을 목표로 합니다.
 
 분석 결과는 **Streamlit 대시보드 ([바로가기](https://seoul-commercial-insight.streamlit.app/))** 를 통해  
 인터랙티브하게 탐색할 수 있습니다.
@@ -27,6 +28,8 @@
 - **매출 성장과 유동인구 변화**는 어떤 관계가 있는가?
 - **최근 떠오르는 상권 (Hot Area)** 은 어디인가?
 - **시간대 · 성별 · 요일**에 따라 소비 패턴은 어떻게 다른가?
+
+<br>
 
 💡 **머신러닝 / 딥러닝은 의도적으로 제외했습니다.**
 
