@@ -160,6 +160,9 @@ Streamlit Dashboard
 패턴을 확인합니다.
 
 
+<br>
+<br>
+
 
 ## 7. Streamlit 대시보드
 
@@ -174,6 +177,9 @@ https://seoul-commercial-insight.streamlit.app/
 | Hot Area TOP 5 | 최근 성장률 상위 상권 순위 |
 | 상세 분석 | 구 선택 시 시간대 · 성별 · 요일 · 유동인구 차트 제공 |
 
+
+<br>
+<br>
 
 
 ## 8. 주요 인사이트
