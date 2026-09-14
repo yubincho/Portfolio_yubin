@@ -2,21 +2,26 @@
 
 
 # 조유빈(Yubin Cho) | Data Engineer Portfolio 🤗
-안녕하세요. 데이터 엔지니어를 목표로 공부 중인 조유빈입니다.  
-데이터를 단순히 분석하는 것을 넘어, **데이터 적재/정제/집계/모델링** 과정을 직접 구현하여  
-재사용 가능한 데이터 구조를 만드는 프로젝트를 만들고 있습니다.
+웹 개발 경력을 바탕으로 데이터 엔지니어링으로 전환 중입니다.
+GCP 환경에서 Airflow로 오케스트레이션한 ELT 데이터 파이프라인을
+설계·구현합니다.
+
+**핵심 기술 스택**
+GCP (GCS, BigQuery) · Apache Airflow · dbt · Python · SQL · Streamlit
 
 ---
 <br>
 
-## Portfolio 1 — 서울시 상권 분석 (유동인구 × 매출 × 공실률)
+## Portfolio 1 — 서울시 상권 분석 데이터 파이프라인
 
-서울시 공공 데이터를 기반으로 **행정동 단위 상권 지표를 통합**하고,  
-분기별로 상권의 **매출 효율(유동인구 대비 매출)** 및 **공실률** 관점에서 분석 가능한 데이터 마트를 구축했습니다.
+GCS → Airflow → BigQuery → dbt → Data Mart 로 이어지는
+엔드투엔드 ELT 파이프라인을 구축했습니다.
 
-- 데이터 파이프라인 구조: **Raw → Staging → Mart**
-- 핵심 테이블: `stg_seoul_sales_quarter`, `mart_sales_dong_quarter`, `mart_commercial_dong_quarter`
-- 목표: 상권 효율/변화 감지 및 비교 분석 기반 마련
+- **수집/적재**: 원천 데이터를 GCS에 적재하고, Airflow DAG로 BigQuery까지 자동 적재
+- **오케스트레이션**: Airflow DAG 2종으로 수집·적재 파이프라인 스케줄링/운영
+- **변환(ELT)**: dbt로 Raw → Staging → Mart 3계층 데이터 모델링
+- **데이터 마트**: mart_sales_dong_quarter 등 분석용 마트 테이블 설계
+- **시각화**: Streamlit 대시보드 https://seoul-commercial-insight.streamlit.app/
 
 ➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio%201) 폴더에서 확인할 수 있습니다.
 
