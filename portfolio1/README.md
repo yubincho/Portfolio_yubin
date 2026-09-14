@@ -100,7 +100,8 @@ Streamlit Dashboard
 
 **Raw → Staging → Mart** 순서로 테이블이 구성됩니다.
 
-📄 ERD / 데이터 모델: `docs/데이터모델.pdf`
+📄 **ERD 다이어그램**: [erd_diagram.png](docs/erd_diagram.png)
+📄 **스키마 정의서**: [SCHEMA.pdf](docs/SCHEMA.pdf)
 
 <br><br>
 
@@ -138,6 +139,8 @@ Streamlit Dashboard
 ## 7. Streamlit 대시보드
 
 🚀 **배포 주소**: https://seoul-commercial-insight.streamlit.app/
+
+> 📊 대시보드 구성 및 분석 내용은 [발표 자료(PPT)](docs/서울시_상권분석_대시보드.pdf) 에서도 확인할 수 있습니다.
 
 | 기능 | 설명 |
 |------|------|
