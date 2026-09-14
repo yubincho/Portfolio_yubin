@@ -23,7 +23,7 @@ GCS → Airflow → BigQuery → dbt → Data Mart 로 이어지는
 - **데이터 마트**: mart_sales_dong_quarter 등 분석용 마트 테이블 설계
 - **시각화**: Streamlit 대시보드 https://seoul-commercial-insight.streamlit.app/
 
-➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio%201) 폴더에서 확인할 수 있습니다.
+➡️ 자세한 내용은 [`portfolio1/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio1) 폴더에서 확인할 수 있습니다.
 
 <br><br>
 
