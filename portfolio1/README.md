@@ -70,7 +70,7 @@ BigQuery – Mart Layer
       ▼
 Streamlit Dashboard
 ```
-![alt text](image.png)
+<img width="1301" height="555" alt="image" src="https://github.com/user-attachments/assets/d8af16c7-8246-484d-b9a3-d321bcd63160" />
 
 ### 레이어별 역할
 
