@@ -132,6 +132,9 @@ Streamlit Dashboard
 
 <img width="622" height="200" alt="image" src="https://github.com/user-attachments/assets/c0cf220a-a710-4fbe-85df-5bbc8571cacb" />
 
+<img width="607" height="496" alt="image" src="https://github.com/user-attachments/assets/b276d0f7-c3ca-4970-9f20-2a5e989125ce" />
+
+
 
 ### 4️⃣ 매출 vs 유동인구 분석
 
