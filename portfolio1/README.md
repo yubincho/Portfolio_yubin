@@ -126,6 +126,11 @@ Streamlit Dashboard
 | 🟡 방어 침체형 | 안정적이나 완만한 감소 |
 | 🔴 구조적 위험형 | 지속적 매출 감소 |
 
+<img width="822" height="627" alt="image" src="https://github.com/user-attachments/assets/80e898aa-8921-40b9-84ba-6b5dab2d0b4e" />
+
+<img width="822" height="251" alt="image" src="https://github.com/user-attachments/assets/c0cf220a-a710-4fbe-85df-5bbc8571cacb" />
+
+
 ### 4️⃣ 매출 vs 유동인구 분석
 
 매출 증가와 유동인구 증가의 상관관계를 산점도로 시각화합니다.
