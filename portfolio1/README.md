@@ -140,7 +140,7 @@ Streamlit Dashboard
 
 🚀 **배포 주소**: https://seoul-commercial-insight.streamlit.app/
 
-> 📊 대시보드 구성 및 분석 내용은 [발표 자료(PPT)](docs/서울시_상권분석_대시보드.pptx) 에서도 확인할 수 있습니다.
+> 📊 대시보드 구성 및 분석 내용은 [발표 자료(PPT)](docs/서울시_상권분석_대시보드.pdf) 에서도 확인할 수 있습니다.
 
 | 기능 | 설명 |
 |------|------|
