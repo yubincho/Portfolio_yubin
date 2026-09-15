@@ -1,6 +1,6 @@
 
 
-<img width="180" height="180" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
+<img width="190" height="180" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
 
 
 ---
