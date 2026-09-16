@@ -1,0 +1,62 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.3'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.bitanalyzer'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// WebClient 사용을 위해
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Feign Client (ML Service 호출용)
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+	// JWT 생성용
+	implementation 'com.auth0:java-jwt:4.4.0'
+	// WebSocket 클라이언트
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// JSON 파싱
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+
+// Spring Cloud BOM 설정 (openfeign 추가시 필수!)
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

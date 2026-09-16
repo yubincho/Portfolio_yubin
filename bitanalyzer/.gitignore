@@ -47,11 +47,10 @@ logs/
 
 # ==================== Environment & Security Config ====================
 # Spring Boot 설정 파일
-backend/src/main/resources/application.yml
-backend/src/main/resources/application-*.yml
-backend/src/main/resources/application*.yml
-backend/src/main/resources/application.properties
-backend/src/main/resources/application-*.properties
+application.yml
+application-*.yml
+application.properties
+application-*.properties
 
 backend/.gradle/
 backend/build/
@@ -107,11 +106,3 @@ test-results/
 # ==================== Misc ====================
 HELP.md
 
-# ==================== Prevent duplicate files from backend ====================
-# backend 폴더 안에 있는 파일들이 루트에 중복으로 올라가지 않도록
-src/
-gradle/
-gradlew
-gradlew.bat
-build.gradle
-settings.gradle
