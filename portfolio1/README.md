@@ -1,6 +1,6 @@
 
 
-<img width="180" height="190" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
+<img width="200" height="180" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
 
 
 ---
@@ -123,10 +123,10 @@ Streamlit Dashboard
 
 | 유형 | 설명 |
 |------|------|
-| 🟢 방어 성장형 | 매출 + 최근 성장 모두 양호 |
-| 🔵 회복 탄력형 | 과거 감소 후 최근 회복세 |
-| 🟡 방어 침체형 | 안정적이나 완만한 감소 |
-| 🔴 구조적 위험형 | 지속적 매출 감소 |
+|  방어 성장형 | 매출 + 최근 성장 모두 양호 |
+|  회복 탄력형 | 과거 감소 후 최근 회복세 |
+|  방어 침체형 | 안정적이나 완만한 감소 |
+|  구조적 위험형 | 지속적 매출 감소 |
 
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/80e898aa-8921-40b9-84ba-6b5dab2d0b4e" />
 
