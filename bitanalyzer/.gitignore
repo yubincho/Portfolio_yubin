@@ -1,0 +1,117 @@
+# ==================== Gradle & Build ====================
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==================== IDE ====================
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### STS / Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### VS Code ###
+.vscode/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ==================== Logs & Temporary Files ====================
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# ==================== Environment & Security Config ====================
+# Spring Boot 설정 파일
+backend/src/main/resources/application.yml
+backend/src/main/resources/application-*.yml
+backend/src/main/resources/application*.yml
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-*.properties
+
+backend/.gradle/
+backend/build/
+backend/*.log
+backend/.env
+backend/*.env
+
+# Local / Dev specific config
+local.yml
+dev.yml
+local.properties
+dev.properties
+
+# Environment variables (Root level)
+.env
+*.env
+
+# Database credentials & secrets
+credentials.json
+secrets.json
+
+# ==================== ML Service (Python) ====================
+ml-service/__pycache__/
+ml-service/.pytest_cache/
+ml-service/.venv/
+ml-service/venv/
+ml-service/models/*.pkl
+ml-service/models/*.onnx
+ml-service/models/*.joblib
+
+ml-service/.env
+ml-service/*.env
+
+# ==================== OS generated files ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==================== Test & Coverage ====================
+coverage/
+*.lcov
+test-results/
+**/target/
+
+# ==================== Docker & Temporary ====================
+*.dockerenv
+.docker/
+
+# ==================== Misc ====================
+HELP.md
+
+# ==================== Prevent duplicate files from backend ====================
+# backend 폴더 안에 있는 파일들이 루트에 중복으로 올라가지 않도록
+src/
+gradle/
+gradlew
+gradlew.bat
+build.gradle
+settings.gradle
