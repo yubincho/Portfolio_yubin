@@ -3,6 +3,7 @@
 
 # 조유빈(Yubin Cho) | Data Engineer Portfolio 🤗
 웹 개발 경력을 바탕으로 데이터 엔지니어링으로 전환 중입니다.
+
 GCP 환경에서 Airflow로 오케스트레이션한 ELT 데이터 파이프라인을
 설계·구현합니다.
 
@@ -27,12 +28,19 @@ GCS → Airflow → BigQuery → dbt → Data Mart 로 이어지는
 
 <br><br>
 
-## Portfolio 2 — 서울시 상권 분석 (ML/DL 모델링 확장)
+## Portfolio 2 — BitAnalyzer: 개인 암호화폐 거래 분석 시스템
 
-Portfolio 1에서 구축한 **행정동×분기 단위 통합 데이터 마트(유동인구 × 매출 × 공실률)**를 학습 데이터로 활용하여,  
-머신러닝/딥러닝 기반으로 **상권 성과 예측 및 리스크 탐지 모델**까지 확장할 예정입니다.
+빗썸 API로 개인 거래 데이터를 수집하고, 거래 내역을 정제·적재하는
+데이터 파이프라인을 구축한 프로젝트입니다.
 
+Java Spring 백엔드와 Python 기반 분석 서비스를 분리한
+세미 마이크로서비스 구조로 설계했습니다.
 
-➡️ 프로젝트는 추후 `portfolio2/` 폴더에 정리할 예정입니다.
+- **데이터 수집**: 빗썸 API 연동으로 개인 거래·자산 데이터 수집
+- **데이터 정제**: 거래 내역 파일을 정제·표준화하여 분석용 데이터로 가공
+- **아키텍처**: Spring(백엔드) + Python(분석) 세미 마이크로서비스 분리
+- **데이터 모델링**: 거래 데이터 저장을 위한 테이블 설계
+
+➡️ 자세한 내용은 [`portfolio2/`](https://github.com/yubincho/Portfolio_yubin/tree/main/portfolio2) 폴더에서 확인할 수 있습니다.
 
 <br><br>
