@@ -3,7 +3,7 @@
 <img width="220" height="180" alt="서울 지형 2" src="https://github.com/user-attachments/assets/13b58896-f5ed-419b-a178-ed05961222bf" />
 
 
----
+
 
 # 서울시 상권 분석 (유동인구 × 매출)
 ### BigQuery 기반 ELT 데이터 파이프라인
