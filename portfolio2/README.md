@@ -1,5 +1,5 @@
 
- <img src="docs/logo.jpg" alt="BitAnalyzer" width="280">
+ <img src="docs/logo.jpg" alt="BitAnalyzer" width="280" height="180">
 
 # BitAnalyzer — 개인 암호화폐 거래 분석 시스템
 
