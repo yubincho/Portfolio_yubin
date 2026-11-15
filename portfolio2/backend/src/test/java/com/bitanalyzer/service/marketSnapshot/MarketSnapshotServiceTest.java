@@ -1,10 +1,11 @@
 package com.bitanalyzer.service.marketSnapshot;
 
-import com.bitanalyzer.domain.enums.TradeSide;
-import com.bitanalyzer.domain.marketSnapshot.MarketSnapshot;
-import com.bitanalyzer.domain.tradeJournal.TradeJournal;
-import com.bitanalyzer.domain.tradeJournal.repository.TradeJournalRepository;
-import com.bitanalyzer.service.tradeJournal.TradeJournalService;
+import com.bitanalyzer.temp.socket.enums.TradeSide;
+import com.bitanalyzer.temp.marketSnapshot.MarketSnapshot;
+import com.bitanalyzer.temp.socket.tradeJournal.TradeJournal;
+import com.bitanalyzer.temp.socket.tradeJournal.repository.TradeJournalRepository;
+import com.bitanalyzer.temp.tradeJournal.TradeJournalService;
+import com.bitanalyzer.temp.marketSnapshot.MarketSnapshotService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 

@@ -1,8 +1,9 @@
 package com.bitanalyzer.config.websocket;
 
 
-import com.bitanalyzer.service.tradeJournal.TradeJournalService;
-import com.bitanalyzer.service.bithumbMessageService.BithumbMessageService;
+import com.bitanalyzer.config.jwt.BithumbJwtProvider;
+import com.bitanalyzer.temp.tradeJournal.TradeJournalService;
+import com.bitanalyzer.temp.bithumbMessageService.BithumbMessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class BithumbWebSocketClient {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Private 전용 엔드포인트
-    private static final String WS_URL = "wss://ws-api.bithumb.com/websocket/v1/private";
+    private static final String WS_URL = "wss://ws-api.bithumb.com/websocket/v2/private";
 
     public void connect() {
         try {

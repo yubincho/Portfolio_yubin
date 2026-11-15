@@ -1,0 +1,29 @@
+package com.bitanalyzer.temp.marketSnapshot;
+
+
+import com.bitanalyzer.temp.marketSnapshot.repository.MarketSnapshotRepository;
+import com.bitanalyzer.temp.socket.tradeJournal.TradeJournal;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class MarketSnapshotService {
+
+    private final MarketSnapshotRepository marketSnapshotRepository;
+
+    @Transactional
+    public MarketSnapshot save(MarketSnapshot marketSnapshot, TradeJournal tradeJournal) {
+        if (tradeJournal != null) {
+            marketSnapshot.setTradeJournal(tradeJournal);
+            tradeJournal.setMarketSnapshot(marketSnapshot);   // 양방향 설정
+        }
+        return marketSnapshotRepository.save(marketSnapshot);
+    }
+
+
+
+}

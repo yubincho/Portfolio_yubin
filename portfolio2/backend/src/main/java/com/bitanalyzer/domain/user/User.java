@@ -1,7 +1,7 @@
 package com.bitanalyzer.domain.user;
 
 
-import com.bitanalyzer.domain.tradeJournal.TradeJournal;
+import com.bitanalyzer.temp.socket.tradeJournal.TradeJournal;
 import jakarta.persistence.*;
 import lombok.*;
 
