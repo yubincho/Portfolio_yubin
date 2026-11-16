@@ -122,6 +122,40 @@ class AverageCostCalculatorTest {
         assertThat(r.warnings()).hasSize(1);
     }
 
+    @Test
+    @DisplayName("출금은 손익 없이 수량만 줄이고, 다 빠져나가면 투자 기간이 끝난다")
+    void withdrawClosesCycleWithoutPnl() {
+        AverageCostCalculator.Result r = calculator.calculate(List.of(
+                fill("A", "bid", "100", "150000", "0", 1),       // 1,500원에 100개
+                fill("W", "withdraw", "100", "0", "0", 2)        // 100개 출금 (해외 거래소로)
+        ));
+
+        assertThat(r.sells()).isEmpty();                          // 판 게 아니라서 매도 기록 없음
+        assertThat(r.cycles()).hasSize(1);
+        AverageCostCalculator.Cycle c = r.cycles().get(0);
+        assertThat(c.closed()).isTrue();
+        assertThat(c.withdrawCount()).isEqualTo(1);
+        assertThat(c.realizedPnl()).isEqualByComparingTo("0");
+        assertThat(c.win()).isNull();                             // 판 적이 없으니 승패 없음
+    }
+
+    @Test
+    @DisplayName("일부만 출금해도 평균 단가는 그대로 유지된다")
+    void partialWithdrawKeepsAverage() {
+        AverageCostCalculator.Result r = calculator.calculate(List.of(
+                fill("A", "bid", "100", "50000", "0", 1),        // 500원에 100개
+                fill("B", "bid", "100", "60000", "0", 2),        // 600원에 100개 → 평균 550원
+                fill("W", "withdraw", "50", "0", "0", 3),        // 50개 출금
+                fill("S", "ask", "150", "105000", "0", 4)        // 남은 150개를 700원에 매도
+        ));
+
+        AverageCostCalculator.Sell s = r.sells().get(0);
+        assertThat(s.avgBuyPrice()).isEqualByComparingTo("550");
+        assertThat(s.realizedPnl()).isEqualByComparingTo("22500");   // (700 - 550) × 150
+        assertThat(r.cycles().get(0).closed()).isTrue();
+        assertThat(r.cycles().get(0).withdrawnQuantity()).isEqualByComparingTo("50");
+    }
+
     // --- 테스트용  ---
     private AverageCostCalculator.Fill fill(String uuid, String side, String volume, String funds, String fee, int day) {
         return new AverageCostCalculator.Fill(uuid, "KRW-XRP", side, new BigDecimal(volume), new BigDecimal(funds),

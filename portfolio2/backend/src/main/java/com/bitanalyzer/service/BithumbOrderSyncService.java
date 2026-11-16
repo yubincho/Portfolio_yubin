@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 
 /**
- * 빗썸 완료 주문을 전부 가져와서 DB에 저장해요.
+ * 빗썸 완료 주문을 전부 가져와서 DB에 저장.
  *
  * 흐름: 1페이지 요청 → 저장 → 2페이지 요청 → 저장 → ... → 빈 페이지가 오면 끝
  * 이미 저장된 주문은 건너뛰어서, 여러 번 실행해도 중복이 생기지 않아요.
@@ -32,37 +33,46 @@ public class BithumbOrderSyncService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    /** @return 새로 저장한 주문 수 */
-    public int syncDoneOrders() throws Exception {
+    /**
+     * 완료(done) 주문 + 부분 체결 후 취소(cancel)된 주문을 가져와요.
+     * 취소된 주문은 하나라도 체결된 것만 저장해요. (체결 0개는 손익과 상관없으니까)
+     * @return 새로 저장한 주문 수
+     */
+    public int syncOrders() throws Exception {
         int saved = 0;
         int skipped = 0;
 
-        for (int page = 1; page <= MAX_PAGES; page++) {
-            String body = bithumbRestClient.getDoneOrders(null, page);  // null = 모든 코인
-            JsonNode orders = objectMapper.readTree(body);
+        for (String state : List.of("done", "cancel")) {
+            for (int page = 1; page <= MAX_PAGES; page++) {
+                String body = bithumbRestClient.getOrders(null, state, page);  // null = 모든 코인
+                JsonNode orders = objectMapper.readTree(body);
 
-            if (!orders.isArray() || orders.isEmpty()) {
-                log.info("{}페이지가 비어 있어서 종료", page);
-                break;
-            }
-
-            for (JsonNode node : orders) {
-                String orderUuid = textOrNull(node, "uuid");
-
-                if (orderUuid == null || bithumbOrderRepository.existsByOrderUuid(orderUuid)) {
-                    skipped++;
-                    continue;
+                if (!orders.isArray() || orders.isEmpty()) {
+                    log.info("[{}] {}페이지가 비어 있어서 종료", state, page);
+                    break;
                 }
 
-                bithumbOrderRepository.save(toEntity(node));
-                saved++;
-            }
+                for (JsonNode node : orders) {
+                    String orderUuid = textOrNull(node, "uuid");
+                    BigDecimal executed = decimalOrNull(node, "executed_volume");
 
-            log.info("{}페이지 처리 완료 ({}건)", page, orders.size());
-            Thread.sleep(PAGE_DELAY_MS);
+                    if (orderUuid == null
+                            || executed == null || executed.signum() == 0          // 체결 0개
+                            || bithumbOrderRepository.existsByOrderUuid(orderUuid)) {
+                        skipped++;
+                        continue;
+                    }
+
+                    bithumbOrderRepository.save(toEntity(node));
+                    saved++;
+                }
+
+                log.info("[{}] {}페이지 처리 완료 ({}건)", state, page, orders.size());
+                Thread.sleep(PAGE_DELAY_MS);
+            }
         }
 
-        log.info("⭕ 빗썸 완료 주문 동기화 끝 — 새로 저장: {}건, 건너뜀: {}건", saved, skipped);
+        log.info("⭕ 빗썸 주문 동기화 끝 — 새로 저장: {}건, 건너뜀: {}건", saved, skipped);
         return saved;
     }
 
@@ -107,7 +117,5 @@ public class BithumbOrderSyncService {
             return null;
         }
     }
-
-
 
 }

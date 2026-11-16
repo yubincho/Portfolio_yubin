@@ -13,9 +13,12 @@ import java.util.*;
  *
  *  매수: 평균 단가 = (기존 원가 합계 + 새로 산 금액) ÷ 전체 수량
  *  매도: 손익 = (판 가격 − 평균 단가) × 판 수량   ← 팔아도 평균 단가는 그대로
+ *  출금: 손익 없이 수량만 줄어요 (판 게 아니라 다른 곳으로 옮긴 것) ← 평균 단가는 그대로
  *  수량이 0(또는 아주 조금)이 되면: 투자 기간(사이클) 1회 끝
  *
- * Spring, DB와 상관없는 "순수 계산"이라 단위 테스트로 바로 검증할 수 있음.
+ * 출금은 side = "withdraw", executedVolume = 출금 수량 + 출금 수수료 로 넣으면 된다.
+ *
+ * Spring, DB와 상관없는 "순수 계산"이라 단위 테스트로 바로 검증할 수 있다.
  *
  * 수수료 처리:
  *  - 매수 수수료가 원화면 원가에 더하고, 코인이면 받은 수량에서 빼. (예전 빗썸 방식)
@@ -50,13 +53,16 @@ public class AverageCostCalculator {
                         OffsetDateTime startedAt, OffsetDateTime endedAt,   // 보유 중이면 endedAt = null
                         Long holdSeconds,
                         int buyCount, int sellCount,
+                        int withdrawCount,              // 출금 횟수
+                        BigDecimal withdrawnQuantity,   // 출금으로 빠져나간 수량 (수수료 포함)
                         BigDecimal totalBuyAmount,      // 이 기간에 산 금액 합계
                         BigDecimal totalSellAmount,     // 이 기간에 받은 금액 합계
                         BigDecimal realizedPnl,
                         BigDecimal returnRate,          // 실현 손익 ÷ 판 수량의 원가
                         BigDecimal remainingQuantity,   // 보유 중이면 남은 수량
                         BigDecimal avgBuyPrice,         // 보유 중이면 지금 평균 단가
-                        boolean closed, Boolean win) {}
+                        boolean closed,
+                        Boolean win) {}                 // 판 적이 없으면(출금만 했으면) null
 
     public record Result(List<Sell> sells, List<Cycle> cycles, List<String> warnings) {}
 
@@ -79,7 +85,8 @@ public class AverageCostCalculator {
     private static class CycleAcc {
         final int no;
         final OffsetDateTime startedAt;
-        int buyCount, sellCount;
+        int buyCount, sellCount, withdrawCount;
+        BigDecimal withdrawnQty = BigDecimal.ZERO;
         BigDecimal buyAmount = BigDecimal.ZERO;
         BigDecimal sellAmount = BigDecimal.ZERO;
         BigDecimal soldCost = BigDecimal.ZERO;
@@ -100,6 +107,10 @@ public class AverageCostCalculator {
         Map<String, List<Fill>> byMarket = new TreeMap<>();
         for (Fill f : fills) {
             if (f.executedVolume() == null || f.executedVolume().signum() <= 0) continue;
+            if (f.orderedAt() == null) {   // 시각이 없으면 순서를 정할 수 없다.
+                warnings.add(f.market() + " " + f.orderUuid() + ": 시각 정보가 없어서 계산에서 제외");
+                continue;
+            }
             byMarket.computeIfAbsent(f.market(), k -> new ArrayList<>()).add(f);
         }
 
@@ -144,8 +155,9 @@ public class AverageCostCalculator {
                     int sellCycleNo = (cycle != null) ? cycle.no : cycleNo;
 
                     BigDecimal q = pos.qty.min(volume);   // 가진 것보다 많이 팔았으면 가진 만큼만 계산
-                    if (volume.compareTo(q) > 0) {
-                        warnings.add(market + " 매도 " + f.orderUuid() + ": 매수 기록 없이 판 수량 " + plain(volume.subtract(q)));
+                    BigDecimal excess = volume.subtract(q);
+                    if (excess.multiply(avgPrice, MC).compareTo(DUST_KRW) >= 0) {   // 1,000원 미만 차이는 무시
+                        warnings.add(market + " 매도 " + f.orderUuid() + ": 매수 기록 없이 판 수량 " + plain(excess));
                     }
 
                     BigDecimal avgCost = pos.avgCost();
@@ -163,12 +175,12 @@ public class AverageCostCalculator {
                             money(pnl), rate(pnl, costAmount),
                             f.orderedAt(), pnl.signum() > 0));
 
-                    // 평균 단가는 그대로, 수량과 원가만 줄인다.
+                    // 평균 단가는 그대로, 수량과 원가만 줄어든다.
                     pos.qty = pos.qty.subtract(q);
                     pos.totalCost = pos.totalCost.subtract(costAmount);
                     pos.totalBuyFee = pos.totalBuyFee.subtract(buyFeeShare);
 
-                    if (cycle == null) continue;   // 잔량 매도는 이미 끝난 투자 기간에 더하지 않는다.
+                    if (cycle == null) continue;   // 잔량 매도는 이미 끝난 투자 기간에 더하지 않음
 
                     cycle.sellCount++;
                     cycle.sellAmount = cycle.sellAmount.add(sellAmount);
@@ -179,7 +191,33 @@ public class AverageCostCalculator {
                     if (pos.isEmpty()) {
                         cycles.add(closedCycle(market, cycle, f.orderedAt()));
                         cycle = null;
-                        // 아주 작은 잔량은 버리지 않고 다음 투자 기간 원가에 그대로 남겨 둔다.
+                        // 아주 작은 잔량은 버리지 않고 다음 투자 기간 원가에 그대로 남겨 둬.
+                    }
+
+                } else if ("withdraw".equals(f.side())) {
+                    // 출금: 판 게 아니라 다른 곳으로 옮긴 것 → 손익 없이 수량과 원가만 줄인자.
+                    if (pos.qty.signum() <= 0) {
+                        warnings.add(market + " 출금 " + f.orderUuid() + ": 보유 수량 없이 출금한 기록 " + plain(volume));
+                        continue;
+                    }
+                    BigDecimal q = pos.qty.min(volume);
+                    if (volume.compareTo(q) > 0) {
+                        warnings.add(market + " 출금 " + f.orderUuid() + ": 매수 기록보다 많이 출금한 수량 " + plain(volume.subtract(q)));
+                    }
+
+                    BigDecimal share = q.divide(pos.qty, MC);
+                    pos.totalCost = pos.totalCost.subtract(pos.totalCost.multiply(share, MC));
+                    pos.totalBuyFee = pos.totalBuyFee.subtract(pos.totalBuyFee.multiply(share, MC));
+                    pos.qty = pos.qty.subtract(q);
+
+                    if (cycle == null) continue;   // 끝난 투자 기간의 잔량을 출금한 경우
+
+                    cycle.withdrawCount++;
+                    cycle.withdrawnQty = cycle.withdrawnQty.add(q);
+
+                    if (pos.isEmpty()) {
+                        cycles.add(closedCycle(market, cycle, f.orderedAt()));
+                        cycle = null;
                     }
                 }
             }
@@ -188,6 +226,7 @@ public class AverageCostCalculator {
             if (cycle != null) {
                 cycles.add(new Cycle(market, cycle.no, cycle.startedAt, null, null,
                         cycle.buyCount, cycle.sellCount,
+                        cycle.withdrawCount, cycle.withdrawnQty,
                         money(cycle.buyAmount), money(cycle.sellAmount),
                         money(cycle.pnl), rate(cycle.pnl, cycle.soldCost),
                         pos.qty, money(pos.avgCost()), false, null));
@@ -201,14 +240,16 @@ public class AverageCostCalculator {
         return new Cycle(market, c.no, c.startedAt, endedAt,
                 Duration.between(c.startedAt, endedAt).getSeconds(),
                 c.buyCount, c.sellCount,
+                c.withdrawCount, c.withdrawnQty,
                 money(c.buyAmount), money(c.sellAmount),
                 money(c.pnl), rate(c.pnl, c.soldCost),
-                BigDecimal.ZERO, null, true, c.pnl.signum() > 0);
+                BigDecimal.ZERO, null, true,
+                c.sellCount > 0 ? c.pnl.signum() > 0 : null);   // 판 적 없이 출금만 했으면 승패 없음
     }
 
     /**
-     * 수수료가 원화인지 코인인지 추측한다.
-     * 수수료 ÷ 금액, 수수료 ÷ 수량 중에서 보통 수수료율(0.15%)에 더 가까운 쪽을 고른다.
+     * 수수료가 원화인지 코인인지 추측해요.
+     * 수수료 ÷ 금액, 수수료 ÷ 수량 중에서 보통 수수료율(0.15%)에 더 가까운 쪽을 골라요.
      */
     static boolean isCoinUnitFee(BigDecimal fee, BigDecimal volume, BigDecimal funds) {
         if (fee.signum() == 0 || funds.signum() == 0) return false;

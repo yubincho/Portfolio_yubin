@@ -32,6 +32,10 @@ public class TradeCycle {
 
     private Integer buyCount;
     private Integer sellCount;
+    private Integer withdrawCount;          // 출금 횟수
+
+    @Column(precision = 30, scale = 8)
+    private BigDecimal withdrawnQuantity;   // 출금으로 빠져나간 수량 (수수료 포함)
 
     @Column(precision = 30, scale = 2)
     private BigDecimal totalBuyAmount;
@@ -52,12 +56,13 @@ public class TradeCycle {
     private BigDecimal avgBuyPrice;         // 보유 중이면 지금 평균 단가
 
     private Boolean closed;                 // 다 팔았으면 true
-    private Boolean win;                    // 끝난 기간만 (보유 중이면 null)
+    private Boolean win;                    // 끝난 기간 중 판 적이 있을 때만 (보유 중이거나 출금만 했으면 null)
 
     @Builder
     private TradeCycle(String market, Integer cycleNo, OffsetDateTime startedAt,
                        OffsetDateTime endedAt, Long holdSeconds, Integer buyCount,
-                       Integer sellCount, BigDecimal totalBuyAmount, BigDecimal totalSellAmount,
+                       Integer sellCount, Integer withdrawCount, BigDecimal withdrawnQuantity,
+                       BigDecimal totalBuyAmount, BigDecimal totalSellAmount,
                        BigDecimal realizedPnl, BigDecimal returnRate, BigDecimal remainingQuantity,
                        BigDecimal avgBuyPrice, Boolean closed, Boolean win) {
         this.market = market;
@@ -67,6 +72,8 @@ public class TradeCycle {
         this.holdSeconds = holdSeconds;
         this.buyCount = buyCount;
         this.sellCount = sellCount;
+        this.withdrawCount = withdrawCount;
+        this.withdrawnQuantity = withdrawnQuantity;
         this.totalBuyAmount = totalBuyAmount;
         this.totalSellAmount = totalSellAmount;
         this.realizedPnl = realizedPnl;
