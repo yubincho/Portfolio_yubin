@@ -42,10 +42,15 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+	testImplementation 'org.assertj:assertj-core:3.27.7'
 //	testImplementation 'org.springframework.security:spring-security-test'
 }
 

@@ -48,6 +48,9 @@ public class BithumbOrder {
     @Column(precision = 30, scale = 8)
     private BigDecimal paidFee;     // 낸 수수료
 
+    @Column(precision = 30, scale = 8)
+    private BigDecimal executedFunds;   // 실제로 오간 금액 (원)
+
     private Integer tradesCount;    // 몇 번에 나눠 체결됐는지
 
     private OffsetDateTime orderedAt;   // 주문 시각 (빗썸 created_at)
@@ -62,7 +65,7 @@ public class BithumbOrder {
     private BithumbOrder(String orderUuid, String market, String side, String orderType,
                          String state, BigDecimal price, BigDecimal volume,
                          BigDecimal remainingVolume, BigDecimal executedVolume,
-                         BigDecimal paidFee, Integer tradesCount,
+                         BigDecimal executedFunds, BigDecimal paidFee, Integer tradesCount,
                          OffsetDateTime orderedAt, String rawJson) {
         this.orderUuid = orderUuid;
         this.market = market;
@@ -73,6 +76,7 @@ public class BithumbOrder {
         this.volume = volume;
         this.remainingVolume = remainingVolume;
         this.executedVolume = executedVolume;
+        this.executedFunds = executedFunds;
         this.paidFee = paidFee;
         this.tradesCount = tradesCount;
         this.orderedAt = orderedAt;

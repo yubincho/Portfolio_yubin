@@ -78,6 +78,7 @@ public class BithumbOrderSyncService {
                 .volume(decimalOrNull(node, "volume"))
                 .remainingVolume(decimalOrNull(node, "remaining_volume"))
                 .executedVolume(decimalOrNull(node, "executed_volume"))
+                .executedFunds(decimalOrNull(node, "executed_funds"))
                 .paidFee(decimalOrNull(node, "paid_fee"))
                 .tradesCount(node.hasNonNull("trades_count") ? node.get("trades_count").asInt() : null)
                 .orderedAt(dateOrNull(node, "created_at"))
