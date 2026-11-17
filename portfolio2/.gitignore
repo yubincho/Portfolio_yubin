@@ -73,15 +73,15 @@ credentials.json
 secrets.json
 
 # ==================== ML Service (Python) ====================
-ml-service/__pycache__/
-ml-service/.pytest_cache/
-ml-service/.venv/
-ml-service/venv/
+analysis-service/__pycache__/
+analysis-service/.pytest_cache/
+analysis-service/.venv/
+analysis-service/venv/
 ml-service/models/*.pkl
 ml-service/models/*.onnx
 ml-service/models/*.joblib
 
-ml-service/.env
+analysis-service/.env
 ml-service/*.env
 
 # ==================== OS generated files ====================

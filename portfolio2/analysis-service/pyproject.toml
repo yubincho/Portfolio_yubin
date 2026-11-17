@@ -1,5 +1,5 @@
 [project]
-name = "ml-service"
+name = "analysis-service"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
